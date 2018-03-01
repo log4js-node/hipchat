@@ -62,7 +62,7 @@ function setupLogging(category, options) {
 
   log4js.configure({
     appenders: { hipchat: options },
-    categories: { default: { appenders: ['hipchat'], level: 'debug' } }
+    categories: { default: { appenders: ['hipchat'], level: 'all' } }
   });
 
   return {
@@ -153,14 +153,59 @@ test('HipChat appender', (batch) => {
     t.end();
   });
 
+  batch.test('trace level events', (t) => {
+    const topic = setupLogging('myLogger', {
+      type: 'hipchat',
+      layout: { type: 'basic' }
+    });
+    topic.logger.trace('trace event');
+
+    t.test('should be mapped to info level', (assert) => {
+      assert.equal(topic.lastRequest.level, 'info');
+      assert.end();
+    });
+    t.end();
+  });
+
+  batch.test('fatal level events', (t) => {
+    const topic = setupLogging('myLogger', {
+      type: 'hipchat',
+      layout: { type: 'basic' }
+    });
+    topic.logger.fatal('fatal event');
+
+    t.test('should be mapped to failure level', (assert) => {
+      assert.equal(topic.lastRequest.level, 'failure');
+      assert.end();
+    });
+    t.end();
+  });
+
   batch.test('when hipchat returns an error', (t) => {
     const topic = setupLogging('myLogger', {
       type: 'hipchat',
       layout: { type: 'basic' }
     });
 
+    topic.logger.info('something has happened');
+
     t.test('it should throw the error', (assert) => {
-      assert.throws(() => { topic.lastRequest.callback(new Error('oh dear')); });
+      assert.throws(() => { topic.lastRequest.callback(new Error('oh dear')); }, new Error('oh dear'));
+      assert.end();
+    });
+    t.end();
+  });
+
+  batch.test('when hipchat does not return an error', (t) => {
+    const topic = setupLogging('myLogger', {
+      type: 'hipchat',
+      layout: { type: 'basic' }
+    });
+
+    topic.logger.info('something has happened');
+
+    t.test('everything should be just fine', (assert) => {
+      assert.doesNotThrow(() => { topic.lastRequest.callback(); });
       assert.end();
     });
     t.end();
