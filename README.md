@@ -9,7 +9,7 @@ The hipchat appender will send every log message it receives to a [hipchat](http
 
 ## Configuration
 
-* `type` - `hipchat`
+* `type` - `@log4js-node/hipchat`
 * `hipchat_token` - `string` - User token with notification privileges
 * `hipchat_room` - `string` - Room ID or name
 * `hipchat_from` - `string` (optional, defaults to empty string) - a label to say where the message is from
@@ -23,7 +23,7 @@ The hipchat appender will send every log message it receives to a [hipchat](http
 ```javascript
 log4js.configure({
   appenders: {
-    squawk: { type: 'hipchat', hipchat_token: 'abc123', hipchat_room: 'ops' }
+    squawk: { type: '@log4js-node/hipchat', hipchat_token: 'abc123', hipchat_room: 'ops' }
   },
   categories: {
     default: { appenders: ['squawk'], level: 'error'}
@@ -38,7 +38,7 @@ This will result in all error (and above) messages being sent to the hipchat roo
 log4js.configure({
   appenders: {
     squawk: {
-      type: 'hipchat',
+      type: '@log4js-node/hipchat',
       hipchat_token: 'abc123',
       hipchat_room: 'things_are_on_fire',
       hipchat_from: 'Hal9000',
